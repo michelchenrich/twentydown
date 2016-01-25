@@ -38,7 +38,7 @@ public class Player {
         return score;
     }
 
-    public void computeRound(Iterable<Trick> tricks) {
+    public void updateScore(Iterable<Trick> tricks) {
         int wins = countWins(tricks);
         score = wins > 0 ? score - wins : score + 5;
     }
@@ -51,7 +51,7 @@ public class Player {
         return wins;
     }
 
-    public void visit(Trick trick) {
+    public void updateCards(Trick trick) {
         cards = cards.update(trick);
     }
 }

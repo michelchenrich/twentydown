@@ -7,6 +7,7 @@ import static hm.twentydown.card.Kind.ACE;
 import static hm.twentydown.card.Kind.KING;
 import hm.twentydown.card.Suit;
 import static hm.twentydown.card.Suit.*;
+import hm.twentydown.doubles.TrickStub;
 import hm.twentydown.trick.Trick;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -103,7 +104,7 @@ public class PlayerTest {
         player.drawFrom(deck);
         player.drawFrom(deck);
         player.drawFrom(deck);
-        player.visit(stubEmptyTrick(SPADES));
+        player.updateCards(stubEmptyTrick(SPADES));
         assertTrue(player.getCards().get(0).isPlayable());
         assertTrue(player.getCards().get(1).isPlayable());
         assertTrue(player.getCards().get(2).isPlayable());
@@ -123,7 +124,7 @@ public class PlayerTest {
         player.drawFrom(deck);
         player.drawFrom(deck);
         player.drawFrom(deck);
-        player.visit(stubTrick(SPADES, followSuit));
+        player.updateCards(stubTrick(SPADES, followSuit));
         assertFalse(player.getCards().get(0).isPlayable());
         assertTrue(player.getCards().get(1).isPlayable());
         assertFalse(player.getCards().get(2).isPlayable());
@@ -142,7 +143,7 @@ public class PlayerTest {
         player.drawFrom(deck);
         player.drawFrom(deck);
         player.drawFrom(deck);
-        player.visit(stubTrick(SPADES, followSuit));
+        player.updateCards(stubTrick(SPADES, followSuit));
         assertTrue(player.getCards().get(0).isPlayable());
         assertTrue(player.getCards().get(1).isPlayable());
         assertTrue(player.getCards().get(2).isPlayable());
@@ -156,19 +157,19 @@ public class PlayerTest {
 
     @Test
     public void winningATrickReducesTheScoreByOne() {
-        player.computeRound(stubTricksWithWins(1));
+        player.updateScore(stubTricksWithWins(1));
         assertEquals(19, player.getScore());
     }
 
     @Test
     public void eachWonTrickReducesScoreByOnOne() {
-        player.computeRound(stubTricksWithWins(3));
+        player.updateScore(stubTricksWithWins(3));
         assertEquals(17, player.getScore());
     }
 
     @Test
     public void withZeroWonTricks_scoreIsIncreasedByFive() {
-        player.computeRound(stubTricksWithWins(0));
+        player.updateScore(stubTricksWithWins(0));
         assertEquals(25, player.getScore());
     }
 

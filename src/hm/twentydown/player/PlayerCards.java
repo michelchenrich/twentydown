@@ -8,18 +8,22 @@ import java.util.stream.Collectors;
 
 public class PlayerCards extends Cards<PlayerCard> {
     public PlayerCards update(Trick trick) {
-        if (trick.hasFollowSuit() && hasSuit(trick.getFollowSuit()))
-            return map(card -> {
+        if (canOnlyFollowSuit(trick))
+            return convertWith(card -> {
                 if (card.hasSuit(trick.getFollowSuit()))
                     return PlayerCard.makePlayable(card);
                 else
                     return PlayerCard.makeNotPlayable(card);
             });
         else
-            return map(PlayerCard::makePlayable);
+            return convertWith(PlayerCard::makePlayable);
     }
 
-    public PlayerCards map(Function<PlayerCard, PlayerCard> mapper) {
+    private boolean canOnlyFollowSuit(Trick trick) {
+        return trick.hasFollowSuit() && hasSuit(trick.getFollowSuit());
+    }
+
+    private PlayerCards convertWith(Function<PlayerCard, PlayerCard> mapper) {
         return stream().map(mapper).collect(Collectors.toCollection(PlayerCards::new));
     }
 }

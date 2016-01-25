@@ -3,8 +3,8 @@ package hm.twentydown;
 import hm.twentydown.card.Card;
 import hm.twentydown.card.Suit;
 import hm.twentydown.player.Player;
+import hm.twentydown.player.Players;
 
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -20,14 +20,14 @@ public class Game {
     }
 
     public void setPlayers(String... names) {
-        List<Player> players = makePlayers(names);
+        Players players = makePlayers(names);
         round = new Round(players, deck);
         presenter.askForTrumpSuit(round.getCurrentPlayer());
         presenter.presentScores(players);
     }
 
-    private List<Player> makePlayers(String[] names) {
-        return Stream.of(names).map(Player::new).collect(Collectors.toList());
+    private Players makePlayers(String[] names) {
+        return Stream.of(names).map(Player::new).collect(Collectors.toCollection(Players::new));
     }
 
     public void setTrumpSuit(Suit trumpSuit) {

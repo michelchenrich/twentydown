@@ -1,6 +1,7 @@
-package hm.twentydown.trick;
+package hm.twentydown.doubles;
 
 import hm.twentydown.player.Player;
+import hm.twentydown.trick.Trick;
 
 public class PlayerSpy extends Player {
     public Trick visitedTrick;
@@ -9,7 +10,7 @@ public class PlayerSpy extends Player {
         super(name);
     }
 
-    public void visit(Trick trick) {
+    public void updateCards(Trick trick) {
         this.visitedTrick = trick;
     }
 }

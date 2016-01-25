@@ -1,6 +1,7 @@
-package hm.twentydown.player;
+package hm.twentydown.doubles;
 
 import hm.twentydown.card.Suit;
+import hm.twentydown.player.Player;
 import hm.twentydown.trick.Trick;
 
 public class TrickStub extends Trick {

@@ -4,16 +4,15 @@ import hm.twentydown.card.Card;
 import static hm.twentydown.card.Kind.*;
 import hm.twentydown.card.Suit;
 import static hm.twentydown.card.Suit.*;
+import hm.twentydown.doubles.PlayerSpy;
 import hm.twentydown.player.Player;
+import hm.twentydown.player.Players;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class TrickTest {
-    private List<Player> players;
+    private Players players;
     private PlayerSpy spyA;
     private PlayerSpy spyB;
     private Suit trumpSuit;
@@ -25,7 +24,7 @@ public class TrickTest {
     public void setUp() throws Exception {
         spyA = new PlayerSpy("A");
         spyB = new PlayerSpy("B");
-        players = Arrays.asList(spyA, spyB);
+        players = new Players(spyA, spyB);
         trumpSuit = SPADES;
         followSuit = CLUBS;
         otherSuit = DIAMONDS;

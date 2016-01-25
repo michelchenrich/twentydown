@@ -6,11 +6,10 @@ import static hm.twentydown.card.Kind.KING;
 import static hm.twentydown.card.Suit.CLUBS;
 import static hm.twentydown.card.Suit.SPADES;
 import hm.twentydown.player.Player;
+import hm.twentydown.player.Players;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Arrays;
 
 public class RoundTest {
     private Player playerA;
@@ -25,7 +24,7 @@ public class RoundTest {
         playerB = new Player("B");
         playerC = new Player("C");
         deck = new FixedOrderDeck();
-        round = new Round(Arrays.asList(playerA, playerB, playerC), deck);
+        round = new Round(new Players(playerA, playerB, playerC), deck);
     }
 
     @Test
