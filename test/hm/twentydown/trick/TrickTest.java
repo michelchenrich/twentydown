@@ -1,5 +1,6 @@
 package hm.twentydown.trick;
 
+import hm.twentydown.FixedOrderDeck;
 import hm.twentydown.card.Card;
 import static hm.twentydown.card.Kind.*;
 import hm.twentydown.card.Suit;
@@ -13,18 +14,25 @@ import org.junit.Test;
 
 public class TrickTest {
     private Players players;
-    private PlayerSpy spyA;
-    private PlayerSpy spyB;
+    private PlayerSpy playerASpy;
+    private PlayerSpy playerBSpy;
     private Suit trumpSuit;
     private Suit followSuit;
     private Suit otherSuit;
     private Trick trick;
 
+    private Trick nextTrick(Trick original) {
+        players.drawFrom(new FixedOrderDeck());
+        for (Player player : players)
+            original.play(player.getCards().getFirst());
+        return original.makeNext();
+    }
+
     @Before
     public void setUp() throws Exception {
-        spyA = new PlayerSpy("A");
-        spyB = new PlayerSpy("B");
-        players = new Players(spyA, spyB);
+        playerASpy = new PlayerSpy("A");
+        playerBSpy = new PlayerSpy("B");
+        players = new Players(playerASpy, playerBSpy);
         trumpSuit = SPADES;
         followSuit = CLUBS;
         otherSuit = DIAMONDS;
@@ -43,12 +51,12 @@ public class TrickTest {
 
     @Test
     public void nextTrickIsNumberTwo() {
-        assertEquals(2, trick.makeNext().getNumber());
+        assertEquals(2, nextTrick(trick).getNumber());
     }
 
     @Test
     public void nextOfNextTrickIsNumberThree() {
-        assertEquals(3, trick.makeNext().makeNext().getNumber());
+        assertEquals(3, nextTrick(nextTrick(trick)).getNumber());
     }
 
     @Test
@@ -58,64 +66,98 @@ public class TrickTest {
 
     @Test
     public void trickFourIsNotLast() {
-        assertFalse(trick.makeNext().makeNext().makeNext().isLast());
+        assertFalse(nextTrick(nextTrick(nextTrick(trick))).isLast());
     }
 
     @Test
     public void trickFiveIsLast() {
-        assertTrue(trick.makeNext().makeNext().makeNext().makeNext().isLast());
+        assertTrue(nextTrick(nextTrick(nextTrick(nextTrick(trick)))).isLast());
     }
 
     @Test
     public void trickIsFinishedAfterAllPlayersPlayed() {
-        for (Player player : players)
-            trick.play(player, new Card(trumpSuit, ACE));
+        for (Player ignored : players)
+            trick.play(new Card(trumpSuit, ACE));
         assertTrue(trick.isFinished());
     }
 
     @Test
     public void trickIsNotFinishedBeforeAllPlayersPlayed() {
-        trick.play(players.get(0), new Card(trumpSuit, ACE));
+        trick.play(new Card(trumpSuit, ACE));
         assertFalse(trick.isFinished());
     }
 
     @Test
+    public void firstPlayerIsCurrentInNewTrick() {
+        assertEquals(playerASpy, trick.getCurrentPlayer());
+    }
+
+    @Test
+    public void afterAPlayer_theNextPlayerPlays() {
+        trick.play(new Card(followSuit, ACE));
+        assertEquals(playerBSpy, trick.getCurrentPlayer());
+    }
+
+    @Test
+    public void trickPlayRemovesTheCardFromTheCurrentPlayersHand() {
+        playerASpy.drawFrom(new FixedOrderDeck());
+
+        trick.play(playerASpy.getCards().getFirst());
+
+        assertEquals(0, playerASpy.getCards().size());
+    }
+
+    @Test
+    public void givenAIsWinnerOfATrick_AStartsPlayingInTheNext() {
+        trick.play(new Card(trumpSuit, ACE));
+        trick.play(new Card(otherSuit, SEVEN));
+        assertEquals(playerASpy, trick.makeNext().getCurrentPlayer());
+    }
+
+    @Test
+    public void givenBIsWinnerOfATrick_BStartsPlayingInTheNext() {
+        trick.play(new Card(followSuit, ACE));
+        trick.play(new Card(trumpSuit, ACE));
+        assertEquals(playerBSpy, trick.makeNext().getCurrentPlayer());
+    }
+
+    @Test
     public void onlyTrumpSuitCardWins() {
-        trick.play(spyA, new Card(followSuit, ACE));
-        trick.play(spyB, new Card(trumpSuit, SEVEN));
-        assertFalse(trick.isWinner(spyA));
-        assertTrue(trick.isWinner(spyB));
+        trick.play(new Card(followSuit, ACE));
+        trick.play(new Card(trumpSuit, SEVEN));
+        assertFalse(trick.isWinner(playerASpy));
+        assertTrue(trick.isWinner(playerBSpy));
     }
 
     @Test
     public void givenNoTrumpSuitCard_onlyFollowSuitCardWins() {
-        trick.play(spyA, new Card(followSuit, SEVEN));
-        trick.play(spyB, new Card(otherSuit, ACE));
-        assertTrue(trick.isWinner(spyA));
-        assertFalse(trick.isWinner(spyB));
+        trick.play(new Card(followSuit, SEVEN));
+        trick.play(new Card(otherSuit, ACE));
+        assertTrue(trick.isWinner(playerASpy));
+        assertFalse(trick.isWinner(playerBSpy));
     }
 
     @Test
     public void givenTwoTrumpSuitCards_winnerIsTheHighestKind() {
-        trick.play(spyA, new Card(trumpSuit, KING));
-        trick.play(spyB, new Card(trumpSuit, ACE));
-        assertFalse(trick.isWinner(spyA));
-        assertTrue(trick.isWinner(spyB));
+        trick.play(new Card(trumpSuit, KING));
+        trick.play(new Card(trumpSuit, ACE));
+        assertFalse(trick.isWinner(playerASpy));
+        assertTrue(trick.isWinner(playerBSpy));
     }
 
     @Test
     public void givenTwoFollowSuitCards_winnerIsTheHighestKind() {
-        trick.play(spyA, new Card(followSuit, ACE));
-        trick.play(spyB, new Card(followSuit, KING));
-        assertTrue(trick.isWinner(spyA));
-        assertFalse(trick.isWinner(spyB));
+        trick.play(new Card(followSuit, ACE));
+        trick.play(new Card(followSuit, KING));
+        assertTrue(trick.isWinner(playerASpy));
+        assertFalse(trick.isWinner(playerBSpy));
     }
 
     @Test
     public void afterEachPlay_eachPlayerObservesTheNewState() {
-        trick.play(spyA, new Card(followSuit, ACE));
-        assertEquals(trick, spyA.visitedTrick);
-        assertEquals(trick, spyB.visitedTrick);
+        trick.play(new Card(followSuit, ACE));
+        assertEquals(trick, playerASpy.visitedTrick);
+        assertEquals(trick, playerBSpy.visitedTrick);
     }
 
     @Test
@@ -130,14 +172,14 @@ public class TrickTest {
 
     @Test
     public void hasFollowSuitAfterFirstPlay() {
-        trick.play(spyA, new Card(followSuit, ACE));
+        trick.play(new Card(followSuit, ACE));
         assertTrue(trick.hasFollowSuit());
     }
 
     @Test
     public void followSuitIsTheSuitOfTheFirstCardPlayed() {
-        trick.play(spyA, new Card(SPADES, ACE));
-        trick.play(spyB, new Card(CLUBS, KING));
+        trick.play(new Card(SPADES, ACE));
+        trick.play(new Card(CLUBS, KING));
         assertEquals(SPADES, trick.getFollowSuit());
     }
 }

@@ -37,7 +37,7 @@ public class Players extends ArrayList<Player> {
     }
 
     private boolean isFirst(Player player) {
-        return get(0).equals(player);
+        return getFirst().equals(player);
     }
 
     public void drawFrom(Deck deck) {
@@ -46,5 +46,9 @@ public class Players extends ArrayList<Player> {
 
     public void updateCards(Trick trick) {
         forEach(player -> player.updateCards(trick));
+    }
+
+    public Player getFirst() {
+        return get(0);
     }
 }

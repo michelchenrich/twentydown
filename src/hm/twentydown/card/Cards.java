@@ -11,4 +11,8 @@ public class Cards<T extends Card> extends ArrayList<T> {
     public Cards<T> filterBySuit(Suit suit) {
         return stream().filter((play -> play.hasSuit(suit))).collect(Collectors.toCollection(Cards::new));
     }
+
+    public T getFirst() {
+        return get(0);
+    }
 }

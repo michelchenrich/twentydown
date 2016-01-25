@@ -47,7 +47,7 @@ public class Round {
     }
 
     public void play(Card card) {
-        trick.play(getCurrentPlayer(), card);
+        trick.play(card);
         currentPlayerIndex++;
         if (currentPlayerIndex == players.size()) {
             currentPlayerIndex = 0;

@@ -12,17 +12,25 @@ public class TrickCards extends Cards<TrickCard> {
     }
 
     public boolean isWinner(Player player) {
-        if (hasSuit(this.trumpSuit))
-            return isPlayerOfHighestCard(trumpSuit, player);
-        else
-            return isPlayerOfHighestCard(getFollowSuit(), player);
+        return getWinningCard().isPlayedBy(player);
     }
 
-    private boolean isPlayerOfHighestCard(Suit suit, Player player) {
-        return filterBySuit(suit).stream().sorted().findFirst().get().isPlayedBy(player);
+    public Player getWinner() {
+        return getWinningCard().getPlayer();
+    }
+
+    private TrickCard getWinningCard() {
+        if (hasSuit(trumpSuit))
+            return getPlayerOfHighestCard(trumpSuit);
+        else
+            return getPlayerOfHighestCard(getFollowSuit());
+    }
+
+    private TrickCard getPlayerOfHighestCard(Suit suit) {
+        return filterBySuit(suit).stream().sorted().findFirst().get();
     }
 
     public Suit getFollowSuit() {
-        return get(0).getSuit();
+        return getFirst().getSuit();
     }
 }

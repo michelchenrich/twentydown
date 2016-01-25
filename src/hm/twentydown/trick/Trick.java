@@ -22,29 +22,12 @@ public class Trick {
         cards = new TrickCards(trumpSuit);
     }
 
-    public boolean isWinner(Player player) {
-        return cards.isWinner(player);
-    }
-
-    public boolean isFinished() {
-        return cards.size() == players.size();
-    }
-
     public int getNumber() {
         return number;
     }
 
-    public Trick makeNext() {
-        return new Trick(number + 1, players, trumpSuit);
-    }
-
-    public void play(Player player, Card card) {
-        cards.add(new TrickCard(player, card));
-        players.updateCards(this);
-    }
-
-    public boolean isLast() {
-        return number == 5;
+    public Player getCurrentPlayer() {
+        return players.getFirst();
     }
 
     public Suit getTrumpSuit() {
@@ -55,7 +38,35 @@ public class Trick {
         return cards.getFollowSuit();
     }
 
+    public void play(Card card) {
+        Player player = getCurrentPlayer();
+        player.drop(card);
+        cards.add(new TrickCard(player, card));
+        players = players.rotate();
+        players.updateCards(this);
+    }
+
+    public boolean isFinished() {
+        return cards.size() == players.size();
+    }
+
+    public boolean isLast() {
+        return number == 5;
+    }
+
+    private Player getWinner() {
+        return cards.getWinner();
+    }
+
+    public boolean isWinner(Player player) {
+        return cards.isWinner(player);
+    }
+
     public boolean hasFollowSuit() {
         return !cards.isEmpty();
+    }
+
+    public Trick makeNext() {
+        return new Trick(number + 1, players.rotateUntil(getWinner()), trumpSuit);
     }
 }

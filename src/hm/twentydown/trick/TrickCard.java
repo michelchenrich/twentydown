@@ -14,4 +14,8 @@ public class TrickCard extends Card {
     public boolean isPlayedBy(Player player) {
         return this.player.equals(player);
     }
+
+    public Player getPlayer() {
+        return player;
+    }
 }

@@ -1,6 +1,8 @@
 package hm.twentydown.player;
 
 import hm.twentydown.card.Cards;
+import static hm.twentydown.player.PlayerCard.makeNotPlayable;
+import static hm.twentydown.player.PlayerCard.makePlayable;
 import hm.twentydown.trick.Trick;
 
 import java.util.function.Function;
@@ -11,9 +13,9 @@ public class PlayerCards extends Cards<PlayerCard> {
         if (canOnlyFollowSuit(trick))
             return convertWith(card -> {
                 if (card.hasSuit(trick.getFollowSuit()))
-                    return PlayerCard.makePlayable(card);
+                    return makePlayable(card);
                 else
-                    return PlayerCard.makeNotPlayable(card);
+                    return makeNotPlayable(card);
             });
         else
             return convertWith(PlayerCard::makePlayable);

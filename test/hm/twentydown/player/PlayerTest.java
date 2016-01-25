@@ -181,4 +181,24 @@ public class PlayerTest {
             tricks.add(stubLostTrick());
         return tricks;
     }
+
+    @Test
+    public void removeCard() {
+        deck = new FixedOrderDeck(Arrays.asList(
+                new Card(SPADES, ACE),
+                new Card(SPADES, KING),
+                new Card(DIAMONDS, ACE),
+                new Card(HEARTS, ACE)));
+        player.drawFrom(deck);
+        player.drawFrom(deck);
+        player.drawFrom(deck);
+        player.drawFrom(deck);
+
+        player.drop(new Card(SPADES, ACE));
+
+        assertEquals(3, player.getCards().size());
+        assertEquals(new Card(SPADES, KING), player.getCards().get(0));
+        assertEquals(new Card(DIAMONDS, ACE), player.getCards().get(1));
+        assertEquals(new Card(HEARTS, ACE), player.getCards().get(2));
+    }
 }

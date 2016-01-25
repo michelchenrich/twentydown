@@ -1,6 +1,7 @@
 package hm.twentydown.player;
 
 import hm.twentydown.Deck;
+import hm.twentydown.card.Card;
 import hm.twentydown.trick.Trick;
 
 public class Player {
@@ -34,6 +35,14 @@ public class Player {
         cards.add(PlayerCard.makeNotPlayable(deck.take()));
     }
 
+    public void drop(Card card) {
+        cards.remove(card);
+    }
+
+    public void updateCards(Trick trick) {
+        cards = cards.update(trick);
+    }
+
     public int getScore() {
         return score;
     }
@@ -49,9 +58,5 @@ public class Player {
             if (trick.isWinner(this))
                 wins++;
         return wins;
-    }
-
-    public void updateCards(Trick trick) {
-        cards = cards.update(trick);
     }
 }
