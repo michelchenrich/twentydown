@@ -156,8 +156,8 @@ public class TrickTest {
     @Test
     public void afterEachPlay_eachPlayerObservesTheNewState() {
         trick.play(new Card(followSuit, ACE));
-        assertEquals(trick, playerASpy.visitedTrick);
-        assertEquals(trick, playerBSpy.visitedTrick);
+        assertEquals(trick, playerASpy.trickForCardsUpdate);
+        assertEquals(trick, playerBSpy.trickForCardsUpdate);
     }
 
     @Test

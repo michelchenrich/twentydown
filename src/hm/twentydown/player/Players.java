@@ -48,6 +48,10 @@ public class Players extends ArrayList<Player> {
         forEach(player -> player.updateCards(trick));
     }
 
+    public void updateScore(Iterable<Trick> tricks) {
+        forEach(player -> player.updateScore(tricks));
+    }
+
     public Player getFirst() {
         return get(0);
     }

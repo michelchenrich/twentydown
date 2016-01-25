@@ -3,9 +3,12 @@ package hm.twentydown.player;
 import hm.twentydown.FixedOrderDeck;
 import hm.twentydown.doubles.PlayerSpy;
 import hm.twentydown.doubles.TrickStub;
+import hm.twentydown.trick.Trick;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Collections;
 
 public class PlayersTest {
     public static final int FIRST = 0;
@@ -90,8 +93,20 @@ public class PlayersTest {
         players.add(playerBSpy);
         players.add(playerCSpy);
         players.updateCards(trickStub);
-        assertEquals(trickStub, playerASpy.visitedTrick);
-        assertEquals(trickStub, playerBSpy.visitedTrick);
-        assertEquals(trickStub, playerCSpy.visitedTrick);
+        assertEquals(trickStub, playerASpy.trickForCardsUpdate);
+        assertEquals(trickStub, playerBSpy.trickForCardsUpdate);
+        assertEquals(trickStub, playerCSpy.trickForCardsUpdate);
+    }
+
+    @Test
+    public void updateScorePropagatesToEachPlayer() {
+        players.add(playerASpy);
+        players.add(playerBSpy);
+        players.add(playerCSpy);
+        Iterable<Trick> tricks = Collections.singletonList(trickStub);
+        players.updateScore(tricks);
+        assertEquals(tricks, playerASpy.tricksForScoreUpdate);
+        assertEquals(tricks, playerBSpy.tricksForScoreUpdate);
+        assertEquals(tricks, playerCSpy.tricksForScoreUpdate);
     }
 }
